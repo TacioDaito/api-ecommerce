@@ -1,3 +1,5 @@
+.rnd
+/storage/oauth-keys
 /.phpunit.cache
 /node_modules
 /public/build
