@@ -1,13 +1,14 @@
+
 <?php
 
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 
-Route::get('login', function () {
-    return view('login');
-})->name('login');
+Route::get('login', [LoginController::class, 'view'])->name('login');
+Route::post('login', [LoginController::class, 'login'])->name('login');
 
 Route::get('/redirect', function (Request $request) {
     $request->session()->put('state', $state = Str::random(40));
@@ -33,7 +34,7 @@ Route::get('/redirect', function (Request $request) {
  
     echo 'http://127.0.0.1:8000/oauth/authorize?'.$query;
     // return redirect('http://127.0.0.1:8000/oauth/authorize?'.$query);
-});
+})->name('redirect');
 
  
 Route::get('/callback', function (Request $request) {
