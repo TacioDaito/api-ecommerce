@@ -13,7 +13,6 @@ class LoginController extends Controller
         if (Auth::check()) {
             return response()->json([
                 'message' => 'Already logged in',
-                'user' => Auth::user(),
             ]);
         } else {
             return view('login');
