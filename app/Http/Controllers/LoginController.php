@@ -33,7 +33,7 @@ class LoginController extends Controller
         }
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect('http://127.0.0.1:8000/oauth/authorize?'.$request->input('redirect_query'));
+            return redirect($request->input('url_previous'));
         } else {
             return response()->json([
                 'message' => 'Invalid credentials',

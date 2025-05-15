@@ -24,11 +24,7 @@
             @csrf
             <input type="email" name="email" placeholder="Email" required />
             <input type="password" name="password" placeholder="Password" required />
-            {{-- Preserve OAuth2 query string --}}
-            @dd (request()->query())
-            @if(request()->getQueryString())
-                <input type="hidden" name="redirect_query" value="{{ request()->getQueryString() }}">
-            @endif
+            <input type="hidden" name="url_previous" value="{{ url()->previous() }}">
             <button type="submit">Login</button>
         </form>
     </div>
