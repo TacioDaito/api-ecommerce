@@ -21,6 +21,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Passport::loadKeysFrom(storage_path('oauth-keys'));
-        Passport::authorizationView('auth.oauth.authorize');
+        Passport::authorizationView('authorize');
     }
 }
