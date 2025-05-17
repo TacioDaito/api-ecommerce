@@ -22,22 +22,19 @@ class LoginController extends Controller
     {
         try {
             $credentials = $request->validate([
-                'email' => 'required|email',
-                'password' => 'required',
+                'email' => 'required|email|max:255',
+                'password' => 'required|max:255',
             ]);
         } catch (\Illuminate\Validation\ValidationException $error) {
-            return response()->json([
-                'message' => 'Validation error',
-                'error' => $error->validator->errors(),
-            ], 422);
+            return redirect()->back()->withErrors($error->validator)->withInput();
         }
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect($request->input('url_previous'));
         } else {
-            return response()->json([
+            return redirect()->back()->withErrors([
                 'message' => 'Invalid credentials',
-            ], 401);
+            ])->withInput();
         }
     }
 }

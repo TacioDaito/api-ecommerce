@@ -32,28 +32,25 @@ Route::get('/redirect', function (Request $request) {
         // 'prompt' => 'consent', // "none", "consent", or "login"
     ]);
  
-    echo 'http://127.0.0.1:8000/oauth/authorize?'.$query;
-    // return redirect('http://127.0.0.1:8000/oauth/authorize?'.$query);
+    return redirect('http://127.0.0.1:8000/oauth/authorize?'.$query);
 })->name('redirect');
 
  
 Route::get('/callback', function (Request $request) {
     $state = $request->session()->pull('state');
- 
     $codeVerifier = $request->session()->pull('code_verifier');
  
     throw_unless(
         strlen($state) > 0 && $state === $request->state,
         InvalidArgumentException::class
     );
- 
     $response = Http::asForm()->post('http://127.0.0.1:8000/oauth/token', [
         'grant_type' => 'authorization_code',
         'client_id' => env('OAUTH_CLIENT_ID'),
         'redirect_uri' => 'http://127.0.0.1:8000/callback',
         'code_verifier' => $codeVerifier,
-        'code' => $request->code,
+        'code' => $request->query('code'),
     ]);
- 
+    dd($response->json());
     return $response->json();
-});
+})->name('callback');
