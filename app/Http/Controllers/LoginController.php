@@ -30,7 +30,7 @@ class LoginController extends Controller
         }
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect($request->input('url_previous'));
+            return redirect()->intended();
         } else {
             return redirect()->back()->withErrors([
                 'message' => 'Invalid credentials',

@@ -24,7 +24,6 @@
             @csrf
             <input type="email" name="email" placeholder="Email" required />
             <input type="password" name="password" placeholder="Password" required />
-            <input type="hidden" name="url_previous" value="{{ url()->previous() }}">
             <button type="submit">Login</button>
         </form>
     </div>
