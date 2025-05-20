@@ -54,39 +54,65 @@ class OrderController extends Controller
         ], 201);
     }
 
-    public function show(Order $order)
+    public function show($order_id)
     {
+        try {
+            $order = Order::with('products')->find($order_id);
+        } catch (\Exception $error) {
+            return response()->json([
+                'success' => false,
+                'error' => $error->getMessage(),
+            ], 500);
+        }
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Order not found',
+            ], 404);
+        }
         return response()->json([
             'success' => true,
-            'data' => $order->load('products')
+            'data' => $order
         ]);
     }
 
-    public function update(Request $request, Order $order)
+    public function update(Request $request, $order_id)
     {
         $validated = $request->validate([
             'products' => 'sometimes|array',
             'products.*.id' => 'required_with:products|exists:products,id',
             'products.*.quantity' => 'required_with:products|integer|min:1',
         ]);
-
         if (isset($validated['products'])) {
             $products = collect($validated['products'])->mapWithKeys(function ($item) {
                 return [$item['id'] => ['quantity' => $item['quantity']]];
             });
-
+            $order = Order::find($order_id);
             $order->products()->sync($products);
         }
-
         return response()->json([
             'success' => true,
             'data' => $order->load('products')
         ]);
     }
 
-    public function destroy(Order $order)
+    public function destroy($order_id)
     {
-        $order->delete();
+        $order = Order::find($order_id);
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Order not found',
+            ], 404);
+        }
+        try {
+            $order->delete();
+        } catch (\Exception $error) {
+            return response()->json([
+                'success' => false,
+                'error' => $error->getMessage(),
+            ], 500);
+        }
         return response()->json([
             'success' => true,
         ], 204);
