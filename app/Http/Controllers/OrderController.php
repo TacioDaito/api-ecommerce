@@ -99,22 +99,19 @@ class OrderController extends Controller
     public function destroy($order_id)
     {
         try {
-            $order = Order::find($order_id);
-            if (!$order) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Order not found',
-                ], 404);
-            }
+            $order = Order::findOrFail($order_id);
             $order->delete();
-        } catch (\Exception $error) {
+            return response()->json(['success' => true], 204);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'error' => $error->getMessage(),
+                'error' => 'Order not found',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
             ], 500);
         }
-        return response()->json([
-            'success' => true,
-        ], 204);
     }
 }
