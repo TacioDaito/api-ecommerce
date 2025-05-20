@@ -9,35 +9,45 @@ class OrderController extends Controller
     {
         try {
             $orders = Order::with('products')->get();
-            return response()->json([
-            'success' => true,
-            'data' => $orders
-        ]);
         } catch (\Exception $error) {
             return response()->json([
                 'success' => false,
                 'error' => $error->getMessage(),
             ], 500);
         }
+        return response()->json([
+            'success' => true,
+            'data' => $orders
+        ]);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'products' => 'required|array',
-            'products.*.id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
-        ]);
-
-        $order = Order::create(['user_id' => $validated['user_id']]);
-
-        $products = collect($validated['products'])->mapWithKeys(function ($item) {
-            return [$item['id'] => ['quantity' => $item['quantity']]];
-        });
-
-        $order->products()->attach($products);
-
+        try {
+            $validated = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'products' => 'required|array',
+                'products.*.id' => 'required|exists:products,id',
+                'products.*.quantity' => 'required|integer|min:1',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $error) {
+            return response()->json([
+                'success' => false,
+                'error' => $error->getMessage(),
+            ], 422);
+        }
+        try {
+            $order = Order::create(['user_id' => $validated['user_id']]);
+            $products = collect($validated['products'])->mapWithKeys(function ($item) {
+                return [$item['id'] => ['quantity' => $item['quantity']]];
+            });
+            $order->products()->attach($products);
+        } catch (\Exception $error) {
+            return response()->json([
+                'success' => false,
+                'error' => $error->getMessage(),
+            ], 500);
+        }
         return response()->json([
             'success' => true,
             'data' => $order->load('products')
