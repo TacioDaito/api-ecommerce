@@ -98,14 +98,14 @@ class OrderController extends Controller
 
     public function destroy($order_id)
     {
-        $order = Order::find($order_id);
-        if (!$order) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Order not found',
-            ], 404);
-        }
         try {
+            $order = Order::find($order_id);
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Order not found',
+                ], 404);
+            }
             $order->delete();
         } catch (\Exception $error) {
             return response()->json([
