@@ -36,10 +36,10 @@ class ProductController extends Controller
         }
     }
 
-    public function show($id)
+    public function show($product_id)
     {
         try {
-            $product = Product::with('orders')->findOrFail($id);
+            $product = Product::with('orders')->findOrFail($product_id);
             return response()->json([
                 'success' => true,
                 'data' => $product
@@ -52,14 +52,14 @@ class ProductController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $product_id)
     {
         try {
             $validated = $request->validate([
                 'name' => 'sometimes|required|string|max:255',
                 'price' => 'sometimes|required|numeric|min:0',
             ]);
-            $product = Product::findOrFail($id);
+            $product = Product::findOrFail($product_id);
             $product->update($validated);
             return response()->json([
                 'success' => true,
@@ -78,10 +78,10 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($product_id)
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = Product::findOrFail($product_id);
             $product->delete();
             return response()->json(['success' => true], 204);
         } catch (ModelNotFoundException) {
