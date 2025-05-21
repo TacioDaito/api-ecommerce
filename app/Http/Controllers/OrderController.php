@@ -30,22 +30,26 @@ class OrderController extends Controller
                 return [$item['id'] => ['quantity' => $item['quantity']]];
             });
             $order->products()->attach($products);
+            return response()->json([
+                'success' => true,
+                'data' => $order->load('products')
+            ], 201);
         } catch (ValidationException $error) {
             return response()->json([
                 'success' => false,
                 'error' => $error->getMessage(),
             ], 422);
         }
-        return response()->json([
-            'success' => true,
-            'data' => $order->load('products')
-        ], 201);
     }
 
     public function show($order_id)
     {
         try {
             $order = Order::with('products')->findOrFail($order_id);
+            return response()->json([
+                'success' => true,
+                'data' => $order
+            ]);
         }
         catch (ModelNotFoundException) {
             return response()->json([
@@ -53,10 +57,6 @@ class OrderController extends Controller
                 'error' => 'Order not found',
             ], 404);
         }
-        return response()->json([
-            'success' => true,
-            'data' => $order
-        ]);
     }
 
     public function update(Request $request, $order_id)
@@ -73,6 +73,10 @@ class OrderController extends Controller
                 });
                 $order = Order::findOrFail($order_id);
                 $order->products()->sync($products);
+                return response()->json([
+                    'success' => true,
+                    'data' => $order->load('products')
+                ]);
             }
         } catch (ValidationException $error) {
             return response()->json([
@@ -85,10 +89,6 @@ class OrderController extends Controller
                 'error' => 'Order not found',
             ], 404);
         }
-        return response()->json([
-            'success' => true,
-            'data' => $order->load('products')
-        ]);
     }
 
     public function destroy($order_id)
