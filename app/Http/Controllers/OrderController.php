@@ -35,6 +35,7 @@ class OrderController extends Controller
                 'products.*.id' => 'required|exists:products,id',
                 'products.*.quantity' => 'required|integer|min:1',
             ]);
+            Gate::authorize('create', $validated['user_id']);
             $order = Order::create(['user_id' => $validated['user_id']]);
             $products = collect($validated['products'])->mapWithKeys(function ($item) {
                 return [$item['id'] => ['quantity' => $item['quantity']]];
