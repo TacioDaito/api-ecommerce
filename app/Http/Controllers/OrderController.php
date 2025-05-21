@@ -2,19 +2,14 @@
 namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        try {
-            $orders = Order::with('products')->get();
-        } catch (\Exception $error) {
-            return response()->json([
-                'success' => false,
-                'error' => $error->getMessage(),
-            ], 500);
-        }
+        $orders = Order::with('products')->get();
         return response()->json([
             'success' => true,
             'data' => $orders
@@ -30,23 +25,16 @@ class OrderController extends Controller
                 'products.*.id' => 'required|exists:products,id',
                 'products.*.quantity' => 'required|integer|min:1',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $error) {
-            return response()->json([
-                'success' => false,
-                'error' => $error->getMessage(),
-            ], 422);
-        }
-        try {
             $order = Order::create(['user_id' => $validated['user_id']]);
             $products = collect($validated['products'])->mapWithKeys(function ($item) {
                 return [$item['id'] => ['quantity' => $item['quantity']]];
             });
             $order->products()->attach($products);
-        } catch (\Exception $error) {
+        } catch (ValidationException $error) {
             return response()->json([
                 'success' => false,
                 'error' => $error->getMessage(),
-            ], 500);
+            ], 422);
         }
         return response()->json([
             'success' => true,
@@ -57,14 +45,9 @@ class OrderController extends Controller
     public function show($order_id)
     {
         try {
-            $order = Order::with('products')->find($order_id);
-        } catch (\Exception $error) {
-            return response()->json([
-                'success' => false,
-                'error' => $error->getMessage(),
-            ], 500);
+            $order = Order::with('products')->findOrFail($order_id);
         }
-        if (!$order) {
+        catch (ModelNotFoundException) {
             return response()->json([
                 'success' => false,
                 'error' => 'Order not found',
@@ -78,17 +61,29 @@ class OrderController extends Controller
 
     public function update(Request $request, $order_id)
     {
-        $validated = $request->validate([
-            'products' => 'sometimes|array',
-            'products.*.id' => 'required_with:products|exists:products,id',
-            'products.*.quantity' => 'required_with:products|integer|min:1',
-        ]);
-        if (isset($validated['products'])) {
-            $products = collect($validated['products'])->mapWithKeys(function ($item) {
-                return [$item['id'] => ['quantity' => $item['quantity']]];
-            });
-            $order = Order::find($order_id);
-            $order->products()->sync($products);
+        try {
+            $validated = $request->validate([
+                'products' => 'sometimes|array',
+                'products.*.id' => 'required_with:products|exists:products,id',
+                'products.*.quantity' => 'required_with:products|integer|min:1',
+            ]);
+            if (isset($validated['products'])) {
+                $products = collect($validated['products'])->mapWithKeys(function ($item) {
+                    return [$item['id'] => ['quantity' => $item['quantity']]];
+                });
+                $order = Order::findOrFail($order_id);
+                $order->products()->sync($products);
+            }
+        } catch (ValidationException $error) {
+            return response()->json([
+                'success' => false,
+                'error' => $error->getMessage(),
+            ], 422);
+        } catch (ModelNotFoundException) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Order not found',
+            ], 404);
         }
         return response()->json([
             'success' => true,
@@ -102,16 +97,11 @@ class OrderController extends Controller
             $order = Order::findOrFail($order_id);
             $order->delete();
             return response()->json(['success' => true], 204);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return response()->json([
                 'success' => false,
                 'error' => 'Order not found',
             ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage(),
-            ], 500);
         }
     }
 }
