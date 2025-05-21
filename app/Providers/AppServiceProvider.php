@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
+use Illuminate\Http\Request;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,5 +25,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Passport::loadKeysFrom(storage_path('oauth-keys'));
         Passport::authorizationView('authorize');
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(20)->by($request->header('Authorization'));
+        });
     }
 }
