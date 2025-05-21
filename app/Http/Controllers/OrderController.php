@@ -1,19 +1,29 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('products')->get();
-        return response()->json([
-            'success' => true,
-            'data' => $orders
-        ]);
+        try {
+            $orders = User::findOrFail(Auth::id())->orders()->with('products')->get();
+            return response()->json([
+                'success' => true,
+                'data' => $orders
+            ]);
+        } catch (ModelNotFoundException) {
+            return response()->json([
+                'success' => false,
+                'error' => 'User not found',
+            ], 404);
+        }
     }
 
     public function store(Request $request)
@@ -46,6 +56,7 @@ class OrderController extends Controller
     {
         try {
             $order = Order::with('products')->findOrFail($order_id);
+            Gate::authorize('view', $order);
             return response()->json([
                 'success' => true,
                 'data' => $order
@@ -72,6 +83,7 @@ class OrderController extends Controller
                     return [$item['id'] => ['quantity' => $item['quantity']]];
                 });
                 $order = Order::findOrFail($order_id);
+                Gate::authorize('update', $order);
                 $order->products()->sync($products);
                 return response()->json([
                     'success' => true,
@@ -95,6 +107,7 @@ class OrderController extends Controller
     {
         try {
             $order = Order::findOrFail($order_id);
+            Gate::authorize('delete', $order);
             $order->delete();
             return response()->json(['success' => true], 204);
         } catch (ModelNotFoundException) {

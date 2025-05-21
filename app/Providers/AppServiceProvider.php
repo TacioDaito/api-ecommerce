@@ -31,8 +31,6 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(20)->by($request->header('Authorization'));
         });
-        Gate::define('user-order', function (User $user, Order $order) {
-            return $user->id === $order->user_id;
-        });
+        
     }
 }
