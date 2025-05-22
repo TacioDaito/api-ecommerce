@@ -8,7 +8,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use App\Policies\ProductPolicy;
+use App\Policies\AdminPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +30,6 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(20)->by($request->header('Authorization'));
         });
-        Gate::define('onlyAllowAdmin', [ProductPolicy::class, 'onlyAllowAdmin']);
+        Gate::define('onlyAllowAdmin', [AdminPolicy::class, 'onlyAllowAdmin']);
     }
 }

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -35,7 +36,7 @@ class OrderController extends Controller
                 'products.*.id' => 'required|exists:products,id',
                 'products.*.quantity' => 'required|integer|min:1',
             ]);
-            Gate::authorize('create', $validated['user_id']);
+            Gate::authorize('createOrder', [Order::class, $validated['user_id']]);
             $order = Order::create(['user_id' => $validated['user_id']]);
             $products = collect($validated['products'])->mapWithKeys(function ($item) {
                 return [$item['id'] => ['quantity' => $item['quantity']]];
@@ -57,7 +58,7 @@ class OrderController extends Controller
     {
         try {
             $order = Order::with('products')->findOrFail($order_id);
-            Gate::authorize('view', $order);
+            Gate::authorize('accessOrder', $order);
             return response()->json([
                 'success' => true,
                 'data' => $order
@@ -84,7 +85,7 @@ class OrderController extends Controller
                     return [$item['id'] => ['quantity' => $item['quantity']]];
                 });
                 $order = Order::findOrFail($order_id);
-                Gate::authorize('update', $order);
+                Gate::authorize('accessOrder', $order);
                 $order->products()->sync($products);
                 return response()->json([
                     'success' => true,
@@ -108,9 +109,9 @@ class OrderController extends Controller
     {
         try {
             $order = Order::findOrFail($order_id);
-            Gate::authorize('delete', $order);
+            Gate::authorize('accessOrder', $order);
             $order->delete();
-            return response()->json(['success' => true], 204);
+            return response()->json(['success' => true]);
         } catch (ModelNotFoundException) {
             return response()->json([
                 'success' => false,

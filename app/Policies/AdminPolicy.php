@@ -2,10 +2,10 @@
 namespace App\Policies;
 use App\Models\User;
 
-class ProductPolicy
+class AdminPolicy
 {
     public function onlyAllowAdmin(User $user): bool
     {
-        return $user->roles()->name === 'admin';
+        return $user->role->name === 'admin';
     }
 }

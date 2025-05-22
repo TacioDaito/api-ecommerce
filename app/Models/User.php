@@ -5,6 +5,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -45,12 +47,12 @@ class User extends Authenticatable
         ];
     }
 
-    public function orders()
+    public function orders(): hasMany
     {
         return $this->hasMany(Order::class);
     }
 
-    public function roles()
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
