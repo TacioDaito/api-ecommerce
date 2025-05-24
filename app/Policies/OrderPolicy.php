@@ -17,6 +17,6 @@ class OrderPolicy
     {
         return $user->id === $request_user_id ?
         Response::allow() :
-        Response::deny('You do not have permission to create this order.');
+        Response::denyWithStatus(403, 'You do not have permission to create this order.');
     }
 }
