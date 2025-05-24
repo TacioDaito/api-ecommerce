@@ -2,7 +2,6 @@
 namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\User;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;

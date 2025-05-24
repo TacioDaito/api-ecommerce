@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Providers;
-
 use Laravel\Passport\Passport;
 use Illuminate\Http\Request;
 use Illuminate\Cache\RateLimiting\Limit;
