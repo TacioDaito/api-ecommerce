@@ -10,7 +10,7 @@ class OrderPolicy
     {
         return $user->id === $order->user_id ?
         Response::allow() :
-        Response::denyWithStatus(404, 'Order not found.');
+        Response::denyAsNotFound();
     }
 
     public function createOrder(User $user, $request_user_id): Response
