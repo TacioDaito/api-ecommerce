@@ -24,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // if ($request->is('api/*')) {
         if (true) {
             $exceptions->render(function (Throwable $error) {
-                $errorMessage = $error->validator 
+                $errorMessage = isset($error->validator)
                 ? $error->validator->errors()->all() : $error->getMessage();
                 $statusCode = $error->status ?? $error->getStatusCode();
                 return response()->json([
