@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
+use PHPUnit\Event\Runtime\Runtime;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
@@ -20,16 +21,20 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // $request = app(Request::class);
-        // if ($request->is('api/*')) {
-        if (true) {
-            $exceptions->render(function (Throwable $error) {
-                $statusCode = $error->status ?? $error->getStatusCode();
+        $exceptions->render(function (Throwable $error, Request $request) {
+            if ($request->is('api/*')) {
+                if (method_exists($error, 'getStatusCode')) {
+                    $statusCode = $error->getStatusCode();
+                } elseif (isset($error->status)) {
+                    $statusCode = $error->status;
+                } else {
+                    $statusCode = 500;
+                }
                 return response()->json([
                     'success' => false,
                     'error' => config('app.debug')
                     ? $error->getMessage() : 'An error occurred',
                 ], config('app.debug') ? $statusCode : 500);
-            });
-        }
+            }
+        });
     })->create();
