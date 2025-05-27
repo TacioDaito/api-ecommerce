@@ -9,6 +9,6 @@ class AdminPolicy
     {
         return $user->role->name === 'admin'
         ? Response::allow()
-        : Response::denyWithStatus(404, 'Route not found.');
+        : Response::deny();
     }
 }

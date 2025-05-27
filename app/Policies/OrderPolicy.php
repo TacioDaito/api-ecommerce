@@ -11,7 +11,7 @@ class OrderPolicy
         return ($user->id === $order->user_id
         || $user->role->name === 'admin')
         ? Response::allow()
-        : Response::denyAsNotFound();
+        : Response::deny();
     }
 
     public function createOrder(User $user, $request_user_id): Response
@@ -19,6 +19,6 @@ class OrderPolicy
         return ($user->id === $request_user_id
         || $user->role->name === 'admin')
         ? Response::allow()
-        : Response::denyWithStatus(403, 'You do not have permission to create this order.');
+        : Response::deny();
     }
 }
