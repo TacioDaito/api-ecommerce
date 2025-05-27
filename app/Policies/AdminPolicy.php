@@ -7,8 +7,8 @@ class AdminPolicy
 {
     public function onlyAllowAdmin(User $user): Response
     {
-        return $user->role->name === 'admin' ?
-        Response::allow() :
-        Response::denyWithStatus(404, 'Route not found.');
+        return $user->role->name === 'admin'
+        ? Response::allow()
+        : Response::denyWithStatus(404, 'Route not found.');
     }
 }
