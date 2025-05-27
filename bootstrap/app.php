@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -21,43 +20,18 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $request = app(Request::class);
+        // $request = app(Request::class);
         // if ($request->is('api/*')) {
         if (true) {
-            $exceptions->render(function (QueryException $error) {
+            $exceptions->render(function (Throwable $error) {
+                $errorMessage = isset($error->validator)
+                ? $error->validator->errors()->all() : $error->getMessage();
+                $statusCode = $error->status ?? $error->getStatusCode();
                 return response()->json([
                     'success' => false,
                     'error' => config('app.debug')
-                    ? $error->getMessage() : 'Database query error'
-                ], 500);
-            });
-            $exceptions->render(function (ValidationException $error) {
-                $errorBag = $error->validator->errors()->all();
-                $debug = config('app.debug');
-                return response()->json([
-                    'success' => false,
-                    count($errorBag) > 1 && $debug
-                    ? 'errors' : 'error' => $debug
-                    ? $errorBag : 'Validation error',
-                ], 422);
-            });
-            $exceptions->render(function (AuthorizationException $error) {
-                return response()->json([
-                    'success' => false,
-                    'error' => $error->getMessage(),
-                ], 403);
-            });
-            $exceptions->render(function (MethodNotAllowedHttpException $error) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Not found',
-                ], 404);
-            });
-            $exceptions->render(function (NotFoundHttpException $error) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Not found',
-                ], 404);
+                    ? $errorMessage : 'An error occurred',
+                ], $statusCode);
             });
         }
     })->create();
