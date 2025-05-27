@@ -1,61 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# API Ecommerce
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a simple RESTful API example for an e-commerce platform built with Laravel. It provides endpoints for managing users, roles, products, and orders. The API uses OAuth2 authentication with PKCE (Proof Key for Code Exchange) via Laravel Passport, ensuring secure access for web and mobile clients.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **User Authentication**: Secure login and registration using OAuth2 with PKCE.
+- **Role-Based Access Control**: Assign roles (e.g., admin, user) to users for fine-grained permissions.
+- **Product Management**: CRUD operations for products, accessible only by admin users.
+- **Order Management**: Users can create and view their orders; admins can access all orders.
+- **Rate Limiting**: Protects API endpoints from abuse.
+- **Custom Policies**: Authorization policies for sensitive actions.
+- **Error Handling**: Consistent JSON error responses for API consumers.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Authentication
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel Passport](https://laravel.com/docs/10.x/passport). PKCE enhances security for public clients (like SPAs and mobile apps) by mitigating authorization code interception attacks.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### How PKCE Works
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. The client generates a code verifier and challenge.
+2. The client initiates the OAuth2 flow, sending the challenge.
+3. The server issues an authorization code.
+4. The client exchanges the code for an access token, sending the original verifier.
+5. The server validates the verifier before issuing tokens.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## API Endpoints
 
-### Premium Partners
+| Method | Endpoint            | Description                        | Auth Required | Role         |
+|--------|---------------------|------------------------------------|---------------|--------------|
+| GET    | `/api/user`         | Get authenticated user info        | Yes           | Any          |
+| GET    | `/api/orders`       | List orders                        | Yes           | User/Admin   |
+| POST   | `/api/orders`       | Create new order                   | Yes           | User/Admin   |
+| GET    | `/api/products`     | List products                      | Yes           | Admin only   |
+| POST   | `/api/products`     | Create product                     | Yes           | Admin only   |
+| ...    | ...                 | ...                                | ...           | ...          |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+> **Note:** Product routes are protected by a policy allowing only admin users.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Getting Started
 
-## Code of Conduct
+### Prerequisites
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- PHP 8.2+
+- Composer
+- MySQL or PostgreSQL
+- [Node.js](https://nodejs.org/) (for frontend assets, if needed)
 
-## Security Vulnerabilities
+### Installation
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/yourusername/api-ecommerce.git
+   cd api-ecommerce
+   ```
 
-## License
+2. **Install dependencies:**
+   ```sh
+   composer install
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. **Copy and configure environment:**
+   ```sh
+   cp .env.example .env
+   # Edit .env with your DB and Passport settings
+   ```
+
+4. **Generate application key:**
+   ```sh
+   php artisan key:generate
+   ```
+
+5. **Run migrations and seeders:**
+   ```sh
+   php artisan migrate --seed
+   ```
+
+6. **Install Passport and generate keys:**
+    ```sh
+    php artisan passport:install
+    php artisan passport:keys
+   ```
+    
+---
+
+### License
+
+This project is open-source.
+
+---
+
+### Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+### Contact
+
+For questions or support, please open an issue on GitHub.
