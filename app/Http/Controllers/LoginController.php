@@ -3,10 +3,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-
+use Illuminate\View\View;
 class LoginController extends Controller
 {
-    public function view()
+    public function view(): View
     {
         return view('login');
     }
