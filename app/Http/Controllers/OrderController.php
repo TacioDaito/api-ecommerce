@@ -5,19 +5,21 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $orders = User::findOrFail(Auth::id())->orders()->with('products')->get();
+        $orders = User::findOrFail(Auth::id())->orders()
+        ->with('products')->get();
         return response()->json([
             'success' => true,
             'data' => $orders
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -37,7 +39,7 @@ class OrderController extends Controller
         ], 201);
     }
 
-    public function show($order_id)
+    public function show($order_id): JsonResponse
     {
         $order = Order::with('products')->findOrFail($order_id);
         Gate::authorize('accessOrder', $order);
@@ -47,28 +49,26 @@ class OrderController extends Controller
         ]);
     }
 
-    public function update(Request $request, $order_id)
+    public function update(Request $request, $order_id): JsonResponse
     {
         $validated = $request->validate([
-            'products' => 'sometimes|array',
+            'products' => 'required|array',
             'products.*.id' => 'required_with:products|exists:products,id',
             'products.*.quantity' => 'required_with:products|integer|min:1',
         ]);
-        if (isset($validated['products'])) {
-            $products = collect($validated['products'])->mapWithKeys(function ($item) {
-                return [$item['id'] => ['quantity' => $item['quantity']]];
-            });
-            $order = Order::findOrFail($order_id);
-            Gate::authorize('accessOrder', $order);
-            $order->products()->sync($products);
-            return response()->json([
-                'success' => true,
-                'data' => $order->load('products')
-            ]);
-        }
+        $products = collect($validated['products'])->mapWithKeys(function ($item) {
+            return [$item['id'] => ['quantity' => $item['quantity']]];
+        });
+        $order = Order::findOrFail($order_id);
+        Gate::authorize('accessOrder', $order);
+        $order->products()->sync($products);
+        return response()->json([
+            'success' => true,
+            'data' => $order->load('products')
+        ]);
     }
 
-    public function destroy($order_id)
+    public function destroy($order_id): JsonResponse
     {
         $order = Order::findOrFail($order_id);
         Gate::authorize('accessOrder', $order);

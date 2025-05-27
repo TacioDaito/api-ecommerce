@@ -24,14 +24,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // if ($request->is('api/*')) {
         if (true) {
             $exceptions->render(function (Throwable $error) {
-                $errorMessage = isset($error->validator)
-                ? $error->validator->errors()->all() : $error->getMessage();
                 $statusCode = $error->status ?? $error->getStatusCode();
                 return response()->json([
                     'success' => false,
                     'error' => config('app.debug')
-                    ? $errorMessage : 'An error occurred',
-                ], $statusCode);
+                    ? $error->getMessage() : 'An error occurred',
+                ], config('app.debug') ? $statusCode : 500);
             });
         }
     })->create();

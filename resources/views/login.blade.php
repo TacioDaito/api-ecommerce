@@ -20,12 +20,25 @@
                 </ul>
             </div>
         @endif
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Password" required />
-            <button type="submit">Login</button>
-        </form>
+        @if (Auth::check())
+            <div class="success">
+                <p>You are already logged in as {{ Auth::user()->name }}.</p>
+            </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit">Logout</button>
+            </form>
+        @else
+            <div class="info">
+                <p>Please enter your credentials to login.</p>
+            </div>
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+                <input type="email" name="email" placeholder="Email" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <button type="submit">Login</button>
+            </form>
+        @endif
     </div>
 </div>
 </body>

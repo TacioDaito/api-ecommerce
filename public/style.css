@@ -76,7 +76,21 @@ button:hover {
 .error {
     color: #d32f2f;
     background: #ffebee;
-    padding: 0.2rem;
+    padding: 0.01rem 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+.success {
+    color: #388e3c;
+    background: #e8f5e9;
+    padding: 0.01rem 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+.info {
+    color: #1976d2;
+    background: #e3f2fd;
+    padding: 0.01rem 0.8rem;
     margin-bottom: 1rem;
     border-radius: 4px;
 }
