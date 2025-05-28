@@ -74,9 +74,9 @@ This is a simple RESTful API example for an e-commerce platform built with Larav
 8. **Create a authorization grant client and save the client id:**
    ```sh
    php artisan passport:client --public
-   # You will be asked to name the client and input the redirect URI. If you use postman for testing, this URI is https://oauth.pstmn.io/v1/callback. 
-   After that, the client id will be printed. Make sure you save it, although you can check it again in the oauth_clients table in the database.
-   ```    
+   ```
+   >You will be asked to name the client and input the redirect URI. If you use postman for testing, this URI is https://oauth.pstmn.io/v1/callback. 
+   >After that, the client id will be printed. Make sure you save it, although you can check it again in the oauth_clients table in the database.
     
 ---
 
