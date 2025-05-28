@@ -35,11 +35,16 @@ This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel 
 | Method | Endpoint            | Description                        | Auth Required | Role         |
 |--------|---------------------|------------------------------------|---------------|--------------|
 | GET    | `/api/user`         | Get authenticated user info        | Yes           | Any          |
-| GET    | `/api/orders`       | List orders                        | Yes           | User/Admin   |
+| GET    | `/api/orders`       | List all user orders               | Yes           | User/Admin   |
 | POST   | `/api/orders`       | Create new order                   | Yes           | User/Admin   |
+| GET    | `/api/orders/{id}`  | Show specific order                | Yes           | User/Admin   |
+| PUT/PATCH | `/api/orders/{id}` | Update specific order            | Yes           | User/Admin   |
+| DELETE | `/api/orders/{id}`  | Delete specific order              | Yes           | User/Admin   |
 | GET    | `/api/products`     | List products                      | Yes           | Admin only   |
 | POST   | `/api/products`     | Create product                     | Yes           | Admin only   |
-| ...    | ...                 | ...                                | ...           | ...          |
+| GET    | `/api/products/{id}` | Show specific product             | Yes           | Admin only   |
+| PUT/PATCH | `/api/products/{id}` | Update specific product        | Yes           | Admin only   |
+| DELETE | `/api/products/{id}`  | Delete specific product          | Yes           | Admin only   |
 
 > **Note:** Product routes are protected by a policy allowing only admin users.
 
