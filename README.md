@@ -43,14 +43,14 @@ $encoded = base64_encode(hash('sha256', $codeVerifier, true));
 $codeChallenge = strtr(rtrim($encoded, '='), '+/', '-_');
 ```
 
->Query params:
->client_id: <your-client-id>
->redirect_uri: https://third-party-app.com/callback
->response_type: code
->scope:
->state: <state>
->code_challenge: <code-challenge>
->code_challenge_method: S256
+- Query params:
+    - client_id: [your-client-id]
+    - redirect_uri: [your-callback-uri]
+    - response_type: code
+    - scope:
+    - state: [state]
+    - code_challenge: [code-challenge]
+    - code_challenge_method: S256
 
 ---
 
