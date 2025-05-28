@@ -32,13 +32,14 @@ This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel 
 9. The client exchanges the code for an access token, sending the original verifier with the authorization code as query parameters.
 10. The server validates the verifier before issuing tokens through URL query.
 
-![OAuth2.0 Flow](https://github.com/user-attachments/assets/ba9a185a-7706-4872-bc5c-36dfe5f4eb69)
-
+>![OAuth2.0 Flow](https://github.com/user-attachments/assets/ba9a185a-7706-4872-bc5c-36dfe5f4eb69)
+>
 >The code verifier should be a random string of between 43 and 128 characters containing letters, numbers, and "-", ".", "_", "~" characters, as defined in the RFC 7636 specification.
 >
 >The code challenge should be a Base64 encoded string with URL and filename-safe characters. The trailing '=' characters should be removed and no line breaks, whitespace, or other additional characters should be present.
 
 ```sh
+<?php
 $state = Str::random(40)
 $codeVerifier = Str::random(128)
 $encoded = base64_encode(hash('sha256', $codeVerifier, true));
