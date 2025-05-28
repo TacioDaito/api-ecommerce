@@ -18,15 +18,39 @@ This is a simple RESTful API example for an e-commerce platform built with Larav
 
 ## Authentication
 
-This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel Passport](https://laravel.com/docs/12.x/passport). PKCE enhances security for public clients (like SPAs and mobile apps) by mitigating authorization code interception attacks.
+This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel Passport](https://laravel.com/docs/12.x/passport#code-grant-pkce). PKCE enhances security for public clients (like SPAs and mobile apps) by mitigating authorization code interception attacks.
 
 ### How PKCE Works
 
-1. The client generates a code verifier and challenge.
-2. The client initiates the OAuth2 flow, sending the challenge.
-3. The server issues an authorization code.
-4. The client exchanges the code for an access token, sending the original verifier.
-5. The server validates the verifier before issuing tokens.
+1. The client generates a code verifier, a code challenge and a state.
+2. The client initiates the OAuth2 flow, sending all the data as query parameters to the _/oauth/authorize/_ route.
+3. The server responds with a login view.
+4. The client logs in with their credentials.
+5. The server responds with a consent view.
+6. The client allows or denies access to the API.
+8. The server issues an authorization code if allowed.
+9. The client exchanges the code for an access token, sending the original verifier with the authorization code as query parameters.
+10. The server validates the verifier before issuing tokens through URL query.
+
+>The code verifier should be a random string of between 43 and 128 characters containing letters, numbers, and "-", ".", "_", "~" characters, as defined in the RFC 7636 specification.
+>
+>The code challenge should be a Base64 encoded string with URL and filename-safe characters. The trailing '=' characters should be removed and no line breaks, whitespace, or other additional characters should be present.
+
+```sh
+$state = Str::random(40)
+$codeVerifier = Str::random(128)
+$encoded = base64_encode(hash('sha256', $codeVerifier, true));
+$codeChallenge = strtr(rtrim($encoded, '='), '+/', '-_');
+```
+
+>Query params:
+>client_id: <your-client-id>
+>redirect_uri: https://third-party-app.com/callback
+>response_type: code
+>scope:
+>state: <state>
+>code_challenge: <code-challenge>
+>code_challenge_method: S256
 
 ---
 
