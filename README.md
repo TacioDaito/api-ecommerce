@@ -1,61 +1,148 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# API Ecommerce
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a simple RESTful API example for an e-commerce platform built with Laravel. It provides endpoints for managing users, roles, products, and orders. The API uses OAuth2 authentication with PKCE (Proof Key for Code Exchange) via Laravel Passport, ensuring secure access for web and mobile clients.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **User Authentication**: Secure login and registration using OAuth2 with PKCE.
+- **Role-Based Access Control**: Assign roles (e.g., admin, user) to users for fine-grained permissions.
+- **Product Management**: CRUD operations for products, accessible only by admin users.
+- **Order Management**: Users can create and view their orders; admins can access all orders.
+- **Rate Limiting**: Protects API endpoints from abuse.
+- **Custom Policies**: Authorization policies for sensitive actions.
+- **Error Handling**: Consistent JSON error responses for API consumers.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Getting Started
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Prerequisites
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- PHP 8.2+
+- Composer
+- MySQL or PostgreSQL
+- [Node.js](https://nodejs.org/) (for frontend assets, if needed)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Installation
 
-## Laravel Sponsors
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/yourusername/api-ecommerce.git
+   cd api-ecommerce
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2. **Install dependencies:**
+   ```sh
+   composer install
+   ```
 
-### Premium Partners
+3. **Copy and configure environment:**
+   ```sh
+   cp .env.example .env
+   # Edit .env with your DB and Passport settings
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+4. **Generate application key:**
+   ```sh
+   php artisan key:generate
+   ```
 
-## Contributing
+5. **Run migrations and seeders:**
+   ```sh
+   php artisan migrate --seed
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6. **Install Passport and generate keys:**
+    ```sh
+    php artisan passport:install
+    php artisan passport:keys
+   ```
+    
+---
 
-## Code of Conduct
+## API Endpoints
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Method | Endpoint            | Description                        | OAuth protected | Login required | Role         |
+|--------|---------------------|------------------------------------|-----------------|----------------|--------------|
+| GET    | `/login`            | Show login view                    | No              | No             | Any          |
+| GET    | `/oauth/authorize`  | Show consent view                  | No              | Yes            | Any          |
+| POST   | `/oauth/token`      | Issue access token                 | No              | Yes            | Any          |
+| GET    | `/api/user`         | Get authenticated user info        | Yes             | Yes            | Any          |
+| GET    | `/api/orders`       | List all user orders               | Yes             | Yes            | User/Admin   |
+| POST   | `/api/orders`       | Create new order                   | Yes             | Yes            | User/Admin   |
+| GET    | `/api/orders/{id}`  | Show specific order                | Yes             | Yes            | User/Admin   |
+| PUT/PATCH | `/api/orders/{id}` | Update specific order            | Yes             | Yes            | User/Admin   |
+| DELETE | `/api/orders/{id}`  | Delete specific order              | Yes             | Yes            | User/Admin   |
+| GET    | `/api/products`     | List products                      | Yes             | Yes            | Admin only   |
+| POST   | `/api/products`     | Create product                     | Yes             | Yes            | Admin only   |
+| GET    | `/api/products/{id}` | Show specific product             | Yes             | Yes            | Admin only   |
+| PUT/PATCH | `/api/products/{id}` | Update specific product        | Yes             | Yes            | Admin only   |
+| DELETE | `/api/products/{id}`  | Delete specific product          | Yes             | Yes            | Admin only   |
 
-## Security Vulnerabilities
+> **Note:** Product routes are protected by a policy allowing only admin users.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
+    
+## Authentication
 
-## License
+This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel Passport](https://laravel.com/docs/12.x/passport#code-grant-pkce). PKCE enhances security for public clients (like SPAs and mobile apps) by mitigating authorization code interception attacks.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### How PKCE Works
+
+1. The client generates a code verifier, a code challenge and a state.
+2. The client initiates the OAuth2 flow, sending all the data as query parameters to the _/oauth/authorize/_ route (GET method).
+3. The server responds with a login view.
+4. The client logs in with their credentials.
+5. The server responds with a consent view.
+6. The client allows or denies access to the API.
+8. The server issues an authorization code if allowed, redirecting to the redirect URI provided.
+9. The client exchanges the authorization code for an access token, sending the original code verifier with the authorization code as query parameters to the _/oauth/token/_ route (POST method).
+10. The server validates the verifier before issuing tokens through URL query.
+
+>![OAuth2.0 Flow](https://github.com/user-attachments/assets/ba9a185a-7706-4872-bc5c-36dfe5f4eb69)
+>
+>The code verifier should be a random string of between 43 and 128 characters containing letters, numbers, and "-", ".", "_", "~" characters, as defined in the RFC 7636 specification.
+>
+>The code challenge should be a Base64 encoded string with URL and filename-safe characters. The trailing '=' characters should be removed and no line breaks, whitespace, or other additional characters should be present.
+
+```sh
+<?php
+$state = Str::random(40)
+$codeVerifier = Str::random(128)
+$encoded = base64_encode(hash('sha256', $codeVerifier, true));
+$codeChallenge = strtr(rtrim($encoded, '='), '+/', '-_');
+```
+
+- Query params:
+    - client_id: [your-client-id]
+    - redirect_uri: [your-callback-uri]
+    - response_type: code
+    - scope:
+    - state: [state]
+    - code_challenge: [code-challenge]
+    - code_challenge_method: S256
+
+The client id is obtained by creating a OAuth client in the database with a artisan command.
+```sh
+php artisan passport:client --public
+```
+
+---
+
+### License
+
+This project is open-source.
+
+---
+
+### Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+### Contact
+
+For questions or support, please open an issue on GitHub.
