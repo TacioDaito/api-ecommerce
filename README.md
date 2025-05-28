@@ -18,7 +18,7 @@ This is a simple RESTful API example for an e-commerce platform built with Larav
 
 ## Authentication
 
-This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel Passport](https://laravel.com/docs/10.x/passport). PKCE enhances security for public clients (like SPAs and mobile apps) by mitigating authorization code interception attacks.
+This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel Passport](https://laravel.com/docs/12.x/passport). PKCE enhances security for public clients (like SPAs and mobile apps) by mitigating authorization code interception attacks.
 
 ### How PKCE Works
 
