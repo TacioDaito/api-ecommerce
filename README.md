@@ -16,72 +16,6 @@ This is a simple RESTful API example for an e-commerce platform built with Larav
 
 ---
 
-## Authentication
-
-This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel Passport](https://laravel.com/docs/12.x/passport#code-grant-pkce). PKCE enhances security for public clients (like SPAs and mobile apps) by mitigating authorization code interception attacks.
-
-### How PKCE Works
-
-1. The client generates a code verifier, a code challenge and a state.
-2. The client initiates the OAuth2 flow, sending all the data as query parameters to the _/oauth/authorize/_ route (GET method).
-3. The server responds with a login view.
-4. The client logs in with their credentials.
-5. The server responds with a consent view.
-6. The client allows or denies access to the API.
-8. The server issues an authorization code if allowed, redirecting to the redirect URI provided.
-9. The client exchanges the authorization code for an access token, sending the original code verifier with the authorization code as query parameters to the _/oauth/token/_ route (POST method).
-10. The server validates the verifier before issuing tokens through URL query.
-
->![OAuth2.0 Flow](https://github.com/user-attachments/assets/ba9a185a-7706-4872-bc5c-36dfe5f4eb69)
->
->The code verifier should be a random string of between 43 and 128 characters containing letters, numbers, and "-", ".", "_", "~" characters, as defined in the RFC 7636 specification.
->
->The code challenge should be a Base64 encoded string with URL and filename-safe characters. The trailing '=' characters should be removed and no line breaks, whitespace, or other additional characters should be present.
-
-```sh
-<?php
-$state = Str::random(40)
-$codeVerifier = Str::random(128)
-$encoded = base64_encode(hash('sha256', $codeVerifier, true));
-$codeChallenge = strtr(rtrim($encoded, '='), '+/', '-_');
-```
-
-- Query params:
-    - client_id: [your-client-id]
-    - redirect_uri: [your-callback-uri]
-    - response_type: code
-    - scope:
-    - state: [state]
-    - code_challenge: [code-challenge]
-    - code_challenge_method: S256
-
-The client id is obtained by creating a OAuth client in the database with a artisan command.
-```sh
-php artisan passport:client --public
-```
-
----
-
-## API Endpoints
-
-| Method | Endpoint            | Description                        | Auth Required | Role         |
-|--------|---------------------|------------------------------------|---------------|--------------|
-| GET    | `/api/user`         | Get authenticated user info        | Yes           | Any          |
-| GET    | `/api/orders`       | List all user orders               | Yes           | User/Admin   |
-| POST   | `/api/orders`       | Create new order                   | Yes           | User/Admin   |
-| GET    | `/api/orders/{id}`  | Show specific order                | Yes           | User/Admin   |
-| PUT/PATCH | `/api/orders/{id}` | Update specific order            | Yes           | User/Admin   |
-| DELETE | `/api/orders/{id}`  | Delete specific order              | Yes           | User/Admin   |
-| GET    | `/api/products`     | List products                      | Yes           | Admin only   |
-| POST   | `/api/products`     | Create product                     | Yes           | Admin only   |
-| GET    | `/api/products/{id}` | Show specific product             | Yes           | Admin only   |
-| PUT/PATCH | `/api/products/{id}` | Update specific product        | Yes           | Admin only   |
-| DELETE | `/api/products/{id}`  | Delete specific product          | Yes           | Admin only   |
-
-> **Note:** Product routes are protected by a policy allowing only admin users.
-
----
-
 ## Getting Started
 
 ### Prerequisites
@@ -126,6 +60,75 @@ php artisan passport:client --public
     php artisan passport:keys
    ```
     
+---
+
+## API Endpoints
+
+| Method | Endpoint            | Description                        | OAuth protected | Login required | Role         |
+|--------|---------------------|------------------------------------|-----------------|----------------|--------------|
+| GET    | `/login`            | Show login view                    | No              | No             | Any          |
+| GET    | `/oauth/authorize`  | Show consent view                  | No              | Yes            | Any          |
+| POST   | `/oauth/token`      | Issue access token                 | No              | Yes            | Any          |
+| GET    | `/api/user`         | Get authenticated user info        | Yes             | Yes            | Any          |
+| GET    | `/api/orders`       | List all user orders               | Yes             | Yes            | User/Admin   |
+| POST   | `/api/orders`       | Create new order                   | Yes             | Yes            | User/Admin   |
+| GET    | `/api/orders/{id}`  | Show specific order                | Yes             | Yes            | User/Admin   |
+| PUT/PATCH | `/api/orders/{id}` | Update specific order            | Yes             | Yes            | User/Admin   |
+| DELETE | `/api/orders/{id}`  | Delete specific order              | Yes             | Yes            | User/Admin   |
+| GET    | `/api/products`     | List products                      | Yes             | Yes            | Admin only   |
+| POST   | `/api/products`     | Create product                     | Yes             | Yes            | Admin only   |
+| GET    | `/api/products/{id}` | Show specific product             | Yes             | Yes            | Admin only   |
+| PUT/PATCH | `/api/products/{id}` | Update specific product        | Yes             | Yes            | Admin only   |
+| DELETE | `/api/products/{id}`  | Delete specific product          | Yes             | Yes            | Admin only   |
+
+> **Note:** Product routes are protected by a policy allowing only admin users.
+
+---
+    
+## Authentication
+
+This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel Passport](https://laravel.com/docs/12.x/passport#code-grant-pkce). PKCE enhances security for public clients (like SPAs and mobile apps) by mitigating authorization code interception attacks.
+
+### How PKCE Works
+
+1. The client generates a code verifier, a code challenge and a state.
+2. The client initiates the OAuth2 flow, sending all the data as query parameters to the _/oauth/authorize/_ route (GET method).
+3. The server responds with a login view.
+4. The client logs in with their credentials.
+5. The server responds with a consent view.
+6. The client allows or denies access to the API.
+8. The server issues an authorization code if allowed, redirecting to the redirect URI provided.
+9. The client exchanges the authorization code for an access token, sending the original code verifier with the authorization code as query parameters to the _/oauth/token/_ route (POST method).
+10. The server validates the verifier before issuing tokens through URL query.
+
+>![OAuth2.0 Flow](https://github.com/user-attachments/assets/ba9a185a-7706-4872-bc5c-36dfe5f4eb69)
+>
+>The code verifier should be a random string of between 43 and 128 characters containing letters, numbers, and "-", ".", "_", "~" characters, as defined in the RFC 7636 specification.
+>
+>The code challenge should be a Base64 encoded string with URL and filename-safe characters. The trailing '=' characters should be removed and no line breaks, whitespace, or other additional characters should be present.
+
+```sh
+<?php
+$state = Str::random(40)
+$codeVerifier = Str::random(128)
+$encoded = base64_encode(hash('sha256', $codeVerifier, true));
+$codeChallenge = strtr(rtrim($encoded, '='), '+/', '-_');
+```
+
+- Query params:
+    - client_id: [your-client-id]
+    - redirect_uri: [your-callback-uri]
+    - response_type: code
+    - scope:
+    - state: [state]
+    - code_challenge: [code-challenge]
+    - code_challenge_method: S256
+
+The client id is obtained by creating a OAuth client in the database with a artisan command.
+```sh
+php artisan passport:client --public
+```
+
 ---
 
 ### License
