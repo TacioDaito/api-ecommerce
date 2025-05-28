@@ -23,13 +23,13 @@ This API uses **OAuth2 with PKCE** for authentication, implemented via [Laravel 
 ### How PKCE Works
 
 1. The client generates a code verifier, a code challenge and a state.
-2. The client initiates the OAuth2 flow, sending all the data as query parameters to the _/oauth/authorize/_ route.
+2. The client initiates the OAuth2 flow, sending all the data as query parameters to the _/oauth/authorize/_ route (GET method).
 3. The server responds with a login view.
 4. The client logs in with their credentials.
 5. The server responds with a consent view.
 6. The client allows or denies access to the API.
-8. The server issues an authorization code if allowed.
-9. The client exchanges the code for an access token, sending the original verifier with the authorization code as query parameters.
+8. The server issues an authorization code if allowed, redirecting to the redirect URI provided.
+9. The client exchanges the authorization code for an access token, sending the original code verifier with the authorization code as query parameters to the _/oauth/token/_ route (POST method).
 10. The server validates the verifier before issuing tokens through URL query.
 
 >![OAuth2.0 Flow](https://github.com/user-attachments/assets/ba9a185a-7706-4872-bc5c-36dfe5f4eb69)
@@ -54,6 +54,11 @@ $codeChallenge = strtr(rtrim($encoded, '='), '+/', '-_');
     - state: [state]
     - code_challenge: [code-challenge]
     - code_challenge_method: S256
+
+The client id is obtained by creating a OAuth client in the database with a artisan command.
+```sh
+php artisan passport:client --public
+```
 
 ---
 
