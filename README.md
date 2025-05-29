@@ -27,6 +27,8 @@ This is a simple RESTful API example for an e-commerce platform built with Larav
 
 ### Installation
 
+>If you use an local MySQL database like Xampp's, turn it on before installation.
+
 1. **Clone the repository:**
    ```sh
    git clone https://github.com/yourusername/api-ecommerce.git
@@ -49,16 +51,32 @@ This is a simple RESTful API example for an e-commerce platform built with Larav
    php artisan key:generate
    ```
 
-5. **Run migrations and seeders:**
+5. **Setup OAuth keys folder :**
+   ```sh
+   mkdir storage/oauth-keys
+   ```
+   >The OAuth keys path can be change in app/Providers/AppServiceProvider.php file in the following line:
+   ```php
+   Passport::loadKeysFrom(storage_path('oauth-keys'));
+   ```
+
+6. **Install Passport and generate keys:**
+   ```sh
+   php artisan passport:install
+   php artisan passport:keys
+   ```
+   
+7. **Run migrations and seeders:**
    ```sh
    php artisan migrate --seed
    ```
 
-6. **Install Passport and generate keys:**
-    ```sh
-    php artisan passport:install
-    php artisan passport:keys
+8. **Create a authorization grant client and save the client id:**
+   ```sh
+   php artisan passport:client --public
    ```
+   >You will be asked to name the client and input the redirect URI. If you use postman for testing, this URI is https://oauth.pstmn.io/v1/callback. 
+   >After that, the client id will be printed. Make sure you save it, although you can check it again in the oauth_clients table in the database.
     
 ---
 
