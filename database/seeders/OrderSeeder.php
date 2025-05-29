@@ -1,15 +1,15 @@
 <?php
 namespace Database\Seeders;
-use App\Models\User;
+use App\Models\Order;
 use Illuminate\Database\Seeder;
 
-class UserSeeder extends Seeder
+class OrderSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        User::factory()->count(10)->create();
+        Order::factory()->count(10)->create();
     }
 }
