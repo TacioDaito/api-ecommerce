@@ -87,25 +87,25 @@ There's a API documentation page that explains a little more about each endpoint
 
 ## API Endpoints
 
-| Method | Endpoint            | Description                        | OAuth protected | Login required | Role         |
-|--------|---------------------|------------------------------------|-----------------|----------------|--------------|
-| GET    | `/docs`             | Show documentation view            | No              | No             | Any          |
-| GET    | `/login`            | Show login view                    | No              | No             | Any          |
-| GET    | `/oauth/authorize`  | Show consent view                  | No              | Yes            | Any          |
-| POST   | `/oauth/token`      | Issue access token                 | No              | Yes            | Any          |
-| GET    | `/api/user`         | Get authenticated user info        | Yes             | Yes            | Any          |
-| GET    | `/api/orders`       | List all user orders               | Yes             | Yes            | User/Admin   |
-| POST   | `/api/orders`       | Create new order                   | Yes             | Yes            | User/Admin   |
-| GET    | `/api/orders/{id}`  | Show specific order                | Yes             | Yes            | User/Admin   |
-| PUT/PATCH | `/api/orders/{id}` | Update specific order            | Yes             | Yes            | User/Admin   |
-| DELETE | `/api/orders/{id}`  | Delete specific order              | Yes             | Yes            | User/Admin   |
-| GET    | `/api/products`     | List products                      | Yes             | Yes            | Admin only   |
-| POST   | `/api/products`     | Create product                     | Yes             | Yes            | Admin only   |
-| GET    | `/api/products/{id}` | Show specific product             | Yes             | Yes            | Admin only   |
-| PUT/PATCH | `/api/products/{id}` | Update specific product        | Yes             | Yes            | Admin only   |
-| DELETE | `/api/products/{id}`  | Delete specific product          | Yes             | Yes            | Admin only   |
+| Method | Endpoint            | Description                        | OAuth protected | Role         |
+|--------|---------------------|------------------------------------|-----------------|--------------|
+| GET    | `/docs`             | Show documentation view            | No              | Any          |
+| GET    | `/login`            | Show login view                    | No              | Any          |
+| GET    | `/oauth/authorize`  | Show consent view                  | No              | Any          |
+| POST   | `/oauth/token`      | Issue access token                 | No              | Any          |
+| GET    | `/api/user`         | Get authenticated user info        | Yes             | Any          |
+| GET    | `/api/orders`       | List all user orders               | Yes             | Any          |
+| POST   | `/api/orders`       | Create new order                   | Yes             | Any          |
+| GET    | `/api/orders/{id}`  | Show specific order                | Yes             | Any          |
+| PUT/PATCH | `/api/orders/{id}` | Update specific order            | Yes             | Any          |
+| DELETE | `/api/orders/{id}`  | Delete specific order              | Yes             | Any          |
+| GET    | `/api/products`     | List products                      | Yes             | Admin only   |
+| POST   | `/api/products`     | Create product                     | Yes             | Admin only   |
+| GET    | `/api/products/{id}` | Show specific product             | Yes             | Admin only   |
+| PUT/PATCH | `/api/products/{id}` | Update specific product        | Yes             | Admin only   |
+| DELETE | `/api/products/{id}`  | Delete specific product          | Yes             | Admin only   |
 
-> **Note:** Product routes are protected by a policy allowing only admin users.
+> **Note:** Users with default client role can only manage their own orders. Admin users can manage all orders and products.
 
 ---
     
