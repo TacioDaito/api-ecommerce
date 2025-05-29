@@ -66,7 +66,7 @@ This is a simple RESTful API example for an e-commerce platform built with Larav
    php artisan passport:keys
    ```
    
-7. **Run migrations and seeders:**
+7. **Run migrations and seeder:**
    ```sh
    php artisan migrate --seed
    ```
@@ -77,6 +77,8 @@ This is a simple RESTful API example for an e-commerce platform built with Larav
    ```
    >You will be asked to name the client and input the redirect URI. If you use postman for testing, this URI is https://oauth.pstmn.io/v1/callback. 
    >After that, the client id will be printed. Make sure you save it, although you can check it again in the oauth_clients table in the database.
+   
+If you use Postman for testing, you can open the json postman collection in the root path in order to test the API locally. You'll need the client id and email of a seeded user; the password is the same for every seeded user: _"password"_. Insert the client id in the authorization tab and press the button at the bottom.
     
 ---
 
