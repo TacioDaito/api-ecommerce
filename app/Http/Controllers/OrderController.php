@@ -42,6 +42,7 @@ class OrderController extends Controller
     public function show(Order $order): JsonResponse
     {
         Gate::authorize('accessOrder', $order);
+        $orders = $order->load('products');
         return response()->json([
             'success' => true,
             'data' => $order

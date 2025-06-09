@@ -29,22 +29,20 @@ class ProductController extends Controller
         ], 201);
     }
 
-    public function show($product_id)
+    public function show(Product $product)
     {
-        $product = Product::with('orders')->findOrFail($product_id);
         return response()->json([
             'success' => true,
             'data' => $product
         ]);
     }
 
-    public function update(Request $request, $product_id)
+    public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'price' => 'sometimes|required|numeric|min:0',
         ]);
-        $product = Product::findOrFail($product_id);
         $product->update($validated);
         return response()->json([
             'success' => true,
@@ -52,9 +50,8 @@ class ProductController extends Controller
         ]);
     }
 
-    public function destroy($product_id)
+    public function destroy(Product $product)
     {
-        $product = Product::findOrFail($product_id);
         $product->delete();
         return response()->json(['success' => true], 204);
     }
