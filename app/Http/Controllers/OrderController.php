@@ -39,9 +39,8 @@ class OrderController extends Controller
         ], 201);
     }
 
-    public function show($order_id): JsonResponse
+    public function show(Order $order): JsonResponse
     {
-        $order = Order::with('products')->findOrFail($order_id);
         Gate::authorize('accessOrder', $order);
         return response()->json([
             'success' => true,
@@ -49,7 +48,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function update(Request $request, $order_id): JsonResponse
+    public function update(Request $request, Order $order): JsonResponse
     {
         $validated = $request->validate([
             'products' => 'required|array',
@@ -59,7 +58,6 @@ class OrderController extends Controller
         $products = collect($validated['products'])->mapWithKeys(function ($item) {
             return [$item['id'] => ['quantity' => $item['quantity']]];
         });
-        $order = Order::findOrFail($order_id);
         Gate::authorize('accessOrder', $order);
         $order->products()->sync($products);
         return response()->json([
@@ -68,9 +66,8 @@ class OrderController extends Controller
         ]);
     }
 
-    public function destroy($order_id): JsonResponse
+    public function destroy(Order $order): JsonResponse
     {
-        $order = Order::findOrFail($order_id);
         Gate::authorize('accessOrder', $order);
         $order->delete();
         return response()->json(['success' => true]);
