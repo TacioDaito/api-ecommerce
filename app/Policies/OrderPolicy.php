@@ -13,12 +13,4 @@ class OrderPolicy
         ? Response::allow()
         : Response::deny();
     }
-
-    public function createOrder(User $user, $request_user_id): Response
-    {
-        return ($user->id === $request_user_id
-        || $user->role->name === 'admin')
-        ? Response::allow()
-        : Response::deny();
-    }
 }
