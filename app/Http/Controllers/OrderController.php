@@ -6,30 +6,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\StoreOrderRequest;
 
 class OrderController extends Controller
 {
     public function index(): JsonResponse
     {
-        $orders = User::findOrFail(Auth::id())->orders()
-        ->with('products')->get();
+        if (Auth::user()->role->name === 'admin') {
+            $orders = Order::with('products')->get();
+        } else {
+            $orders = User::findOrFail(Auth::id())->orders()
+            ->with('products')->get();
+        }
         return response()->json([
             'success' => true,
             'data' => $orders
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreOrderRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'products' => 'required|array',
-            'products.*.id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
-        ]);
-        Gate::authorize('createOrder', [Order::class, (int)$validated['user_id']]);
-        $order = Order::create(['user_id' => $validated['user_id']]);
-        $products = collect($validated['products'])->mapWithKeys(function ($item) {
+        $order = Order::create(['user_id' => $request->user_id]);
+        $products = collect($request->products)->mapWithKeys(function ($item) {
             return [$item['id'] => ['quantity' => $item['quantity']]];
         });
         $order->products()->attach($products);
