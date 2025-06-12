@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Order\StoreOrderRequest;
@@ -17,7 +18,7 @@ class OrderController extends Controller
 
         $orders = $user->role->name === 'admin'
             ? Order::with('products')->get()
-            : $user->orders()->with('products')->get();
+            : User::find(Auth::id())->orders()->with('products')->get();
 
         return response()->json([
             'success' => true,
