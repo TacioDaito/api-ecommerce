@@ -48,7 +48,7 @@ class User extends Authenticatable
 
     public function orders(): hasMany
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class)->chaperone();
     }
 
     public function role(): BelongsTo
